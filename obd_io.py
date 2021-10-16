@@ -28,7 +28,6 @@ import serial
 import string
 import time
 from math import ceil
-import wx #due to debugEvent messaging
 
 import re
 
@@ -47,7 +46,7 @@ GET_DTC_COMMAND   = "03"
 CLEAR_DTC_COMMAND = "04"
 GET_FREEZE_DTC_COMMAND = "07"
 import traceback
-from debugEvent import *
+# from debugEvent import *
 import logging
 logger = logging.getLogger(__name__)
 

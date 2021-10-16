@@ -28,10 +28,10 @@ from multiprocessing import Queue, Process
 # import wxversion
 # wxversion.select("2.6")
 
-import matplotlib
+# import matplotlib
 #matplotlib.use('TkAgg')
-import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
+# import matplotlib.pyplot as plt
+# from matplotlib.animation import FuncAnimation
 #from matplotlib import style
 
 import traceback
