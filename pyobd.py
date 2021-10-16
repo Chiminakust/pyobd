@@ -59,6 +59,9 @@ from wx.lib.mixins.listctrl import ListCtrlAutoWidthMixin
 import obd
 from obd import OBDStatus
 
+
+SERIAL_PATH = sys.argv[1]
+
 ID_ABOUT = 101
 ID_EXIT = 110
 ID_CONFIG = 500
@@ -756,7 +759,7 @@ class MyApp(wx.App):
         else:
             self.configfilepath = os.environ['HOME'] + '/.pyobdrc'
         if self.config.read(self.configfilepath) == []:
-            self.COMPORT = "/dev/ttyACM0"
+            self.COMPORT = SERIAL_PATH
             self.RECONNATTEMPTS = 5
             self.SERTIMEOUT = 1
             self.BAUDRATE = "AUTO"
@@ -769,7 +772,7 @@ class MyApp(wx.App):
                 self.BAUDRATE = self.config.get("pyOBD", "BAUDRATE")
                 self.FAST = self.config.get("pyOBD", "FAST")
             except:
-                self.COMPORT = "/dev/ttyACM0"
+                self.COMPORT = SERIAL_PATH
                 self.RECONNATTEMPTS = 5
                 self.SERTIMEOUT = 1
                 self.BAUDRATE = "AUTO"
