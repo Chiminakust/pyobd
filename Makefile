@@ -5,3 +5,5 @@ setup:
 shell:
 	pipenv shell
 
+emulator:
+	python -m elm
