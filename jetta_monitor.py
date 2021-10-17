@@ -30,6 +30,9 @@ def get_intake_manifold_pressure(obd):
 def get_engine_rpm(obd):
     return query(obd, 'RPM')
 
+def get_speed(obd):
+    return query(obd, 'SPEED')
+
 def get_maf_air_flow_rate(obd):
     return query(obd, 'MAF')
 
@@ -38,6 +41,15 @@ def get_engine_load(obd):
 
 def get_commanded_throttle_actuator(obd):
     return query(obd, 'THROTTLE_ACTUATOR')
+
+def get_throttle_position(obd):
+    return query(obd, 'THROTTLE_POS')
+
+def get_engine_coolant_temp(obd):
+    return query(obd, 'COOLANT_TEMP')
+
+def get_engine_run_time(obd):
+    return query(obd, 'RUN_TIME')
 
 
 def main(serial_path: str):
@@ -55,9 +67,13 @@ def main(serial_path: str):
         print('intake manifold temperature:', get_intake_manifold_temp(obd))
         print('intake manifold pressure:', get_intake_manifold_pressure(obd))
         print('engine rpm:', get_engine_rpm(obd))
+        print('speed:', get_speed(obd))
         print('MAF:', get_maf_air_flow_rate(obd))
         print('engine load:', get_engine_load(obd))
-        print('throttle:', get_commanded_throttle_actuator(obd))
+        print('commanded throttle:', get_commanded_throttle_actuator(obd))
+        print('throttle position:', get_throttle_position(obd))
+        print('engine coolant temperature:', get_engine_coolant_temp(obd))
+        print('run time:', get_engine_run_time(obd))
         sleep(0.25)
 
     obd.close()
