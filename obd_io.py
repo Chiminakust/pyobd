@@ -23,32 +23,31 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ###########################################################################
 
+
+import obd
+from obd_sensors import hex_to_int, SENSORS
+
+import traceback
+import logging
+logger = logging.getLogger(__name__)
 from pdb import set_trace as bp
 import serial
 import string
 import time
 from math import ceil
-
 import re
 
-import obd_sensors
-
-from obd_sensors import hex_to_int
-
-import obd
-import decimal
 
 def truncate(num, n):
-    integer = int(num * (10**n))/(10**n)
-    return float(integer)
+    """Truncate a float to n decimals."""
+
+    return float(int(num * (10 ** n)) / (10 ** n))
+
 
 GET_DTC_COMMAND   = "03"
 CLEAR_DTC_COMMAND = "04"
 GET_FREEZE_DTC_COMMAND = "07"
-import traceback
-# from debugEvent import *
-import logging
-logger = logging.getLogger(__name__)
+
 
 #__________________________________________________________________________
 def decrypt_dtc_code(code):
@@ -59,7 +58,7 @@ def decrypt_dtc_code(code):
         if len(current)<4:
             raise "Tried to decode bad DTC: %s" % code
 
-        tc = obd_sensors.hex_to_int(current[0]) #typecode
+        tc = hex_to_int(current[0]) #typecode
         tc = tc >> 2
         if   tc == 0:
             type = "P"
@@ -72,10 +71,10 @@ def decrypt_dtc_code(code):
         else:
             raise tc
 
-        dig1 = str(obd_sensors.hex_to_int(current[0]) & 3)
-        dig2 = str(obd_sensors.hex_to_int(current[1]))
-        dig3 = str(obd_sensors.hex_to_int(current[2]))
-        dig4 = str(obd_sensors.hex_to_int(current[3]))
+        dig1 = str(hex_to_int(current[0]) & 3)
+        dig2 = str(hex_to_int(current[1]))
+        dig3 = str(hex_to_int(current[2]))
+        dig4 = str(hex_to_int(current[3]))
         dtc.append(type+dig1+dig2+dig3+dig4)
         current = current[4:]
     return dtc
@@ -93,21 +92,17 @@ class OBDConnection:
         else:
             FAST = False
 
-        counter = 0
-        while counter < RECONNATTEMPTS:
-            counter = counter + 1
-            # wx.PostEvent(self._notify_window, DebugEvent([2, "Connection attempt:" + str(counter)]))
-            #print (FAST)
-            self.connection = obd.OBD(portstr=portnum,baudrate=baud,fast=FAST, timeout=truncate(float(SERTIMEOUT),1))
-            #print (self.connection.port_name())
+        for attempt in range(RECONNATTEMPTS):
+            self.connection = obd.OBD(portstr=portnum, baudrate=baud, fast=FAST,
+                                      timeout=truncate(float(SERTIMEOUT), 1))
             if self.connection.status() == "Car Connected":
-                # wx.PostEvent(self._notify_window, DebugEvent([2, "Connected to: "+ str(self.connection.port_name())]))
                 break
             else:
                 self.connection.close()
 
     def close(self):
-        """ Resets device and closes all associated filehandles"""
+        """Resets device and closes all associated filehandles."""
+
         self.connection.close()
         self.ELMver = "Unknown"
 
@@ -116,14 +111,14 @@ class OBDConnection:
          (Sensor Name (string), Sensor Value (string), Sensor Unit (string) ) """
         ###for command in self.connection.supported_commands[1].name
         pass
-        #sensor = obd_sensors.SENSORS[sensor_index]
+        #sensor = SENSORS[sensor_index]
         #r = self.get_sensor_value(sensor)
         #return (sensor.name,r, sensor.unit)
 
     def sensor_names(self):
         """Internal use only: not a public interface"""
         names = []
-        for s in obd_sensors.SENSORS:
+        for s in SENSORS:
             names.append(s.name)
         return names
     """

@@ -60,8 +60,10 @@ class OBD(object):
         self.__frame_counts = {}  # keeps track of the number of return frames for each command
 
         logger.info("======================= python-OBD (v%s) =======================" % __version__)
+        print('connecting ...')
         self.__connect(portstr, baudrate, protocol,
                        check_voltage, start_low_power)  # initialize by connecting and loading sensors
+        print('fetching available commands ...')
         self.__load_commands()  # try to load the car's supported commands
         logger.info("===================================================================")
 

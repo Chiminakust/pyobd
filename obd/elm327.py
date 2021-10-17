@@ -146,6 +146,7 @@ class ELM327:
             return
 
         # ---------------------------- ATZ (reset) ----------------------------
+        print('reseting elm')
         try:
             self.__send(b"ATZ", delay=1)  # wait 1 second for ELM to initialize
             # return data can be junk, so don't bother checking
@@ -154,18 +155,21 @@ class ELM327:
             return
 
         # -------------------------- ATE0 (echo OFF) --------------------------
+        print('setting echo off')
         r = self.__send(b"ATE0", delay=1)
         if not self.__isok(r, expectEcho=True):
             self.__error("ATE0 did not return 'OK'")
             return
 
         # ------------------------- ATH1 (headers ON) -------------------------
+        print('setting headers on')
         r = self.__send(b"ATH1", delay=1)
         if not self.__isok(r):
             self.__error("ATH1 did not return 'OK', or echoing is still ON")
             return
 
         # ------------------------ ATL0 (linefeeds OFF) -----------------------
+        print('setting linefeeds off')
         r = self.__send(b"ATL0", delay=1)
         if not self.__isok(r):
             self.__error("ATL0 did not return 'OK'")
@@ -176,6 +180,7 @@ class ELM327:
 
         # -------------------------- AT RV (read volt) ------------------------
         if check_voltage:
+            print('checking voltage')
             r = self.__send(b"AT RV", delay=1)
             if not r or len(r) != 1 or r[0] == '':
                 self.__error("No answer from 'AT RV'")
@@ -199,6 +204,12 @@ class ELM327:
                             self.__port.baudrate,
                             self.__protocol.ELM_ID,
                         ))
+            print("Connected Successfully: PORT=%s BAUD=%s PROTOCOL=%s" %
+                  (
+                      portname,
+                      self.__port.baudrate,
+                      self.__protocol.ELM_ID,
+                  ))
         else:
             if self.__status == OBDStatus.OBD_CONNECTED:
                 logger.error("Adapter connected, but the ignition is off")
@@ -287,8 +298,10 @@ class ELM327:
             # when connecting to pseudo terminal, don't bother with auto baud
             if self.port_name().startswith("/dev/pts"):
                 logger.debug("Detected pseudo terminal, skipping baudrate setup")
+                print("Detected pseudo terminal, skipping baudrate setup")
                 return True
             else:
+                print("auto detecting baudrate")
                 return self.auto_baudrate()
         else:
             self.__port.baudrate = baud
@@ -325,6 +338,7 @@ class ELM327:
             # watch for the prompt character
             if response.endswith(b">"):
                 logger.debug("Choosing baud %d" % baud)
+                print('detected baudrate is:', baud)
                 self.__port.timeout = timeout  # reinstate our original timeout
                 return True
 
